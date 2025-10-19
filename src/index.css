@@ -1,0 +1,276 @@
+@import "tailwindcss";
+
+@theme {
+  --color-github-dark: #0d1117;
+  --color-github-surface: #161b22;
+  --color-github-border: #21262d;
+  --color-github-text: #c9d1d9;
+  --color-github-text-secondary: #8b949e;
+  --color-github-accent: #3b82f6;
+  --color-github-spring: #1B4D3E;
+  --color-github-purple: #2f2f2f;
+}
+
+
+/* Font Family */
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Grid Pattern */
+.grid-pattern {
+  background-image: radial-gradient(circle, var(--github-accent) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes floatDelayed {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: floatDelayed 3s ease-in-out infinite 0.5s;
+}
+
+/* Fade In Animations */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease-out;
+}
+
+.fade-in-up.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+.fade-in-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.6s ease-out;
+}
+
+.fade-in-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.6s ease-out;
+}
+
+.fade-in-up.animate-in,
+.fade-in-left.animate-in,
+.fade-in-right.animate-in {
+  opacity: 1;
+  transform: translate(0);
+}
+
+/* Typing Animation */
+.typing-text {
+  display: inline-block;
+}
+
+.typing-cursor {
+  display: inline-block;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Project Cards */
+.project-card {
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.6s ease-out;
+}
+
+.project-card.animate-in {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.project-card:hover {
+  transform: translateY(-10px);
+}
+
+/* Experience Cards */
+.experience-card {
+  transform: translateY(30px);
+  opacity: 0;
+  transition: all 0.6s ease-out;
+}
+
+.experience-card.animate-in {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.experience-item {
+  transform: scale(0.95);
+  transition: all 0.3s ease-out;
+}
+
+.experience-item:hover {
+  transform: scale(1);
+  box-shadow: 0 10px 25px rgba(35, 134, 54, 0.15);
+}
+
+/* Skill Cards */
+.skill-card {
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideInUp 0.6s ease-out forwards;
+}
+
+@keyframes slideInUp {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.skill-bar {
+  width: 0;
+  transition: width 1.5s ease-out;
+}
+
+.skill-bar.animate {
+  width: var(--skill-width);
+}
+
+/* Contact Form */
+.form-group input:focus,
+.form-group textarea:focus {
+  box-shadow: 0 0 0 3px rgba(35, 134, 54, 0.1);
+}
+
+.contact-info-item {
+  transform: translateX(-10px);
+  opacity: 0;
+  animation: slideInLeft 0.6s ease-out forwards;
+}
+
+@keyframes slideInLeft {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.social-link {
+  transform: translateY(10px);
+  opacity: 0;
+  animation: slideInUp 0.6s ease-out forwards;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .fade-in-left,
+  .fade-in-right {
+    transform: translateY(20px);
+  }
+  
+  .fade-in-left.animate-in,
+  .fade-in-right.animate-in {
+    transform: translateY(0);
+  }
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+
+  word-break: keep-all;   /* 단어 단위로 줄바꿈 (한글 쪼개짐 방지) */
+  line-break: strict;     /* 한국어 줄바꿈 규칙 적용 */
+  white-space: normal;    /* 강제 줄바꿈 방지 */
+
+}
+
+#root {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+/* Text selection */
+::selection {
+  background-color: var(--github-accent);
+  color: white;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--github-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--github-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--github-accent);
+}
+
+/* Line clamp utility */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
