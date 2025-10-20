@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import AIService from './components/AIService';
 import Footer from './components/Footer';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 /*
  TODO: 푸터 추가하기
@@ -53,6 +54,7 @@ function App() {
   }, []);
 
   return (
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <div className="bg-github-dark text-github-text font-inter">
         <Header activeSection={activeSection}/>
         <main>
@@ -61,6 +63,7 @@ function App() {
         </main> 
         <Footer/>
     </div>
+    </GoogleOAuthProvider>
   )
 };
 
