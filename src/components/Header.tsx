@@ -3,7 +3,6 @@ import { useUserStore } from '../store/user/userStore';
 import LoginModal from '../components/modal/LoginModal';
 import SignupModal from './modal/SignupModal';
 import axios from "axios";
-import { GoogleLogin } from '@react-oauth/google';
 interface HeaderProps {
     activeSection: string;
 }
@@ -51,20 +50,54 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
         { name: 'AI 서비스', id: 'AIService' },
     ];
 
-    const handleLogin = (username: string, password: string) => {
-        console.log("로그인시도", username, password);
-        // TODO: 나중에 authService 연결
+    const handleLogin = async (username: string, password: string) => {
+        console.log("로그인 시도", username, password);
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/login`, 
+                {
+                    username,
+                    password
+                })
+
+                console.log("로그인 성공");
+
+                login({
+                    username: response.data.username,
+                    email: response.data.email,
+                    password: response.data.password,
+                    accessToken: response.data.accessToken
+                });
+        } catch(error) {
+            console.error("로그인 실패:", error);
+            alert("로그인에 실패했습니다.");              
+        }
     }
 
-    const handleSignup = (username: string, password: string, email: string) => {
-        console.log('회원가입 시도:', username, email, password);
-        // TODO: 나중에 authService 연결       
-    }
+    const handleSignup = async (username: string, name: string, nickname: string, email: string, phone: string, password: string) => {
+        console.log('회원가입 시도:', nickname, name, email, phone, password);
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/users/signup`,
+                {
+                    username,
+                    name,
+                    nickname,
+                    phone,
+                    password,
+                    email,
+                });
 
-    // TODO: 동적으로 PROD, DEV 방식으로 URL변경되게 해야함
-    const handleGoogleLogin = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/google";
-      };      
+                console.log("회원가입 성공");
+
+                login({
+                    email: response.data.email,
+                    password: response.data.password,
+                });
+        } catch (error) {
+            console.error("회원가입 실패:", error);
+            alert("회원가입에 실패했습니다.");                  
+        }
+    }
+   
 
     return (
         <>
@@ -99,65 +132,28 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
                 {/* 로그인 & 회원가입 버튼 */}
                 <div className="ml-6 flex items-center space-x-4">
                     {!isLoggedIn ? (
-                        <button onClick={handleGoogleLogin} className="btn-primary">
-                        구글 로그인
-                        </button>                      
-                    //     <GoogleLogin 
-                    //     onSuccess={async (credentialResponse) => {
-                    //         if(credentialResponse.credential) {
-                    //             const idToken = credentialResponse.credential;
-                    //             console.log("구글 ID 토큰 ", idToken)
-                                
-
-                    //             try {
-                    //                 const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/oauth2/authorization/google`, {token: idToken});
-                    //                 console.log("서비스 로그인 성공: ", res.data);
-
-                    //                 login({
-                    //                     username: res.data.username,
-                    //                     email: res.data.email,
-                    //                     picture: res.data.picture,
-                    //                   });                              
-                    //             } catch (err) {
-                    //                 console.error("서비스 로그인 실패: ", err);
-                    //             }
-                    //         }
-                    //     }}    
-                    //     onError={() => {alert("구글 로그인에 실패했습니다.")
-
-                    //     }}
-                    //     useOneTap
-                    //     theme="outline"
-                    //     size="large"
-                    //     text="signin_with"   // undefined 방지
-                    //     shape="rectangular"  // undefined 방지                      
-                    // />
-                    // )
+                        <>
+                            <button className="btn-primary" onClick={() => setIsLoginOpen(true)}>
+                            로그인
+                            </button>
+       
+                            <button
+                                className="btn-secondary" onClick={() => setIsSignupOpen(true)}>
+                                회원가입
+                            </button>                  
+                        </>
                     ) : (
                         <div className="flex items-center space-x-3">
-                        <span className="text-sm text-github-text-secondary">
-                          {user?.username || user?.email} 님
-                        </span>
-                        <button onClick={logout} className="btn-secondary">
-                          로그아웃
-                        </button>
-                      </div>                                 
+                            <span className="text-sm text-github-text-secondary">
+                            {user?.username || user?.email} 님
+                            </span>                           
+                            <button onClick={logout} className="btn-secondary">
+                            로그아웃
+                            </button>
+                        </div>                                 
                     )}
-                    
-                    {/*
-                    
-                    <button className="btn-primary" onClick={() => setIsLoginOpen(true)}>
-                        로그인
-                    </button>
 
-                     <button
-                        className="btn-secondary" onClick={() => setIsSignupOpen(true)}>
-                        회원가입
-                    </button> 
-                    
-                    ** 로그인은 소셜로그인으로 하고 추후 일반 로그인/회원가입 기능 추가 예정 - 백두현
 
-                    */}
                 </div>
                 </div>
             </div>
