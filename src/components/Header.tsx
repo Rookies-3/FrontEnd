@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useUserStore } from '../store/user/userStore';
 import LoginModal from '../components/modal/LoginModal';
 import SignupModal from './modal/SignupModal';
+import axios from "axios";
 import { GoogleLogin } from '@react-oauth/google';
 interface HeaderProps {
     activeSection: string;
@@ -60,6 +61,11 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
         // TODO: 나중에 authService 연결       
     }
 
+    // TODO: 동적으로 PROD, DEV 방식으로 URL변경되게 해야함
+    const handleGoogleLogin = () => {
+        window.location.href = "http://localhost:8080/oauth2/authorization/google";
+      };      
+
     return (
         <>
         <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${
@@ -93,37 +99,40 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
                 {/* 로그인 & 회원가입 버튼 */}
                 <div className="ml-6 flex items-center space-x-4">
                     {!isLoggedIn ? (
-                        <GoogleLogin 
-                        onSuccess={(credentialResponse) => {
-                            if(credentialResponse.credential) {
-                                const idToken = credentialResponse.credential;
-                                console.log("구글 ID 토큰 ", idToken)
+                        <button onClick={handleGoogleLogin} className="btn-primary">
+                        구글 로그인
+                        </button>                      
+                    //     <GoogleLogin 
+                    //     onSuccess={async (credentialResponse) => {
+                    //         if(credentialResponse.credential) {
+                    //             const idToken = credentialResponse.credential;
+                    //             console.log("구글 ID 토큰 ", idToken)
                                 
-                                const payload = decodeJwt(idToken);
-                                login({
-                                    username: payload.name,
-                                    email: payload.email,
-                                    picture: payload.picture,
-                                });
-                                // fetch("/oauth2/authorization/google", {
-                                //         method: "POST",
-                                //         headers: { "Content-Type": "application/json" },
-                                //         body: JSON.stringify({ token: idToken }),
-                                // }).then(res => res.json())
-                                // .then(data => {
-                                //     console.log("서비스 로그인 성공: ", data);
-                                // });
-                            }
-                        }}    
-                        onError={() => {alert("구글 로그인에 실패했습니다.")
 
-                        }}
-                        useOneTap
-                        theme="outline"
-                        size="large"
-                        text="signin_with"   // undefined 방지
-                        shape="rectangular"  // undefined 방지                      
-                    />
+                    //             try {
+                    //                 const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/oauth2/authorization/google`, {token: idToken});
+                    //                 console.log("서비스 로그인 성공: ", res.data);
+
+                    //                 login({
+                    //                     username: res.data.username,
+                    //                     email: res.data.email,
+                    //                     picture: res.data.picture,
+                    //                   });                              
+                    //             } catch (err) {
+                    //                 console.error("서비스 로그인 실패: ", err);
+                    //             }
+                    //         }
+                    //     }}    
+                    //     onError={() => {alert("구글 로그인에 실패했습니다.")
+
+                    //     }}
+                    //     useOneTap
+                    //     theme="outline"
+                    //     size="large"
+                    //     text="signin_with"   // undefined 방지
+                    //     shape="rectangular"  // undefined 방지                      
+                    // />
+                    // )
                     ) : (
                         <div className="flex items-center space-x-3">
                         <span className="text-sm text-github-text-secondary">
