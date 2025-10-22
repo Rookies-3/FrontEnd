@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.2",
+    "@stomp/stompjs": "^7.2.1",
     "axios": "^1.12.2",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-icons": "^5.5.0",
+    "sockjs-client": "^1.6.1",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
@@ -24,6 +26,7 @@
     "@types/node": "^24.5.2",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
+    "@types/sockjs-client": "^1.5.4",
     "@vitejs/plugin-react": "^5.0.0",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",

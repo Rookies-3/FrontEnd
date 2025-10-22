@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clipboard, ArrowUp } from 'lucide-react';
+import { Heart, Clipboard, ArrowUp } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -12,14 +12,14 @@ const Footer: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center space-x-1 text-github-text-secondary mb-4 md:mb-0">
             <span>Made with</span>
-            <Clipboard className="w-4 h-4 text-red-500 animate-pulse" />
+            <Heart className="w-4 h-4 text-red-500 animate-pulse" />
             <span>by</span>
-            <span className="text-github-accent font-medium">팀명</span>
+            <span className="text-github-accent font-medium">면접을 Job아!</span>
           </div>
 
           <div className="flex items-center space-x-6">
             <p className="text-sm text-github-text-secondary">
-              © SK쉴더스 루키즈 4기 1팀 팀명
+              © SK쉴더스 루키즈 4기 1팀 면접을Job아!
             </p>
             
             <button

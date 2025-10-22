@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { GoogleLogin } from '@react-oauth/google';
 interface LoginModalProps {
     onClose: () => void;
     onLogin: (username: string, password: string) => void;
@@ -32,10 +31,6 @@ interface LoginModalProps {
       onLogin(username, password);
       onClose();
     };
-  
-    const handleGoogleLogin = () => {
-      window.location.href = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`;
-    };   
 
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
@@ -79,28 +74,18 @@ interface LoginModalProps {
           <button
             type="submit"
             className="flex-1 py-2 rounded-md bg-github-accent hover:bg-github-accent/80 text-white font-semibold transition"
-            >
+          >
             로그인
           </button>
-          {/* 소셜 로그인 구분선 */}
-          <div className="flex items-center my-4">
-            <hr className="flex-grow border-github-border" />
-            <span className="px-2 text-sm text-github-text-secondary">또는</span>
-            <hr className="flex-grow border-github-border" />
-          </div>
-
-          <button onClick={handleGoogleLogin} className="flex-1 py-2 rounded-md bg-github-dark border border-github-border text-github-text hover:bg-github-dark/80 transition">
-                        구글 로그인
-          </button>  
-
           <button
             type="button"
             onClick={onClose}
-            className="btn-primary"
+            className="flex-1 btn-primary"
           >
             닫기
           </button>
         </div>
+
 
       </form>
 
