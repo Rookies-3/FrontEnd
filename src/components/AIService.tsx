@@ -1,20 +1,36 @@
 import React from 'react';
 import { Code2, Database, Globe, Server, Wrench, Bot, ShieldCheck, Layers } from 'lucide-react';
+import { useUserStore } from '../store/user/userStore';
 
 const AIService: React.FC = () => {
     // TODO: db에서 어떤 값들을 들고오자. 뭘 들고올지는 모르겠지만 값을 들고와서 뿌려야함.
-
+    const { isLoggedIn, user} = useUserStore();
 
     return (
         <section id="AIService" className="py-20 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-16 fade-in-up">
                     <h2 className="text-3xl sm:text-4xl font-bold text-github-text mb-4">
-                        서비스 1번 <span className="text-github-accent">Me</span>
+                     안녕하세요, {!isLoggedIn ?
+                                 (
+                                    <span className="text-github-accent">
+                                        방문자님
+                                    </span> 
+                                  ) : (
+                                    <span className="text-github-accent">
+                                        {user?.username} 님
+                                    </span>
+                                  )}
                     </h2> 
-                    <p className="text-lg text-github-text-secondary max-w-2xl mx-auto">
-                        저희 1팀의 1번 서비스입니다. 
-                    </p>                  
+                    {!isLoggedIn ? (
+                        <p className="text-lg text-github-text-secondary max-w-2xl mx-auto">
+                            로그인이 필요한 서비스입니다.  
+                        </p>     
+                    ) : (
+                        <p className="text-lg text-github-text-secondary max-w-2xl mx-auto">
+                            오늘은 무엇을 도와드릴까요?  
+                        </p>   
+                    )}             
                 </div>
 
                 <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">

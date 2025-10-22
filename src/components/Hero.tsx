@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowDown, Code, Database, Server } from 'lucide-react';
 import { FaPlay, FaStop, FaPause, FaVolumeMute } from "react-icons/fa";
+import { useUserStore } from '../store/user/userStore';
 
 const Hero: React.FC = () => {
     const [displayText, setDisplayText] = useState('');
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const texts = ['서비스 설명 1', '서비스 설명 2'];
+    const texts = ['맞춤 면접 코칭~', 'AI가 도와드려요!'];
 
     
     useEffect(() => {
@@ -74,10 +75,8 @@ const Hero: React.FC = () => {
                     </div>
 
                     <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 px-2">
-                        {/* <span className="text-github-text">안녕하세요!</span>
-                        <br /> */}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-github-accent to-github-purple">
-                        팀명을 적어보자
+                        면접을 JOB아!
                         </span>
                     </h1>
 
@@ -89,7 +88,7 @@ const Hero: React.FC = () => {
                     </div>
 
                     <div className="text-base sm:text-lg text-github-text-secondary mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-4">
-                        <p>뭔가 말을 적어보는 것도 좋겠네.</p>
+                        <p>저희는 실시간 AI 서비스로 여러분 한 분 한 분 마다 적합한 솔루션을 제공해드립니다.</p>
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
@@ -97,16 +96,16 @@ const Hero: React.FC = () => {
                             onClick={() => scrollToSection('AIService')}
                             className="btn-primary group"
                         >
-                            서비스로 가기
+                            AI 코치와 대화하기.
                             <Code className="w-4 h-4 ml-2 group-hover:rotate-12 transition-transform duration-200" />
                         </button>      
-                        <button
+                        {/* <button
                             onClick={() => scrollToSection('AIServiceSecond')}
                             className="btn-secondary group"
                         >
                             서비스2로 가기
                             <ArrowDown className="w-4 h-4 ml-2 group-hover:translate-y-1 transition-transform duration-200" />
-                        </button>                 
+                        </button>                  */}
                     </div>
 
                     <div className="animate-bounce">
