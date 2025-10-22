@@ -135,33 +135,47 @@ const AIService: React.FC = () => {
         <div className="flex h-[500px] bg-github-surface rounded-xl shadow-lg overflow-hidden">
           {/* 채팅방 목록 */}
           <div className="w-64 border-r border-github-border bg-github-dark flex flex-col">
+
+            {isLoggedIn ? (
+            <>
             <div className="p-4 font-bold text-github-accent">채팅방 목록</div>
-            <div className="flex-1 overflow-y-auto">
-              {rooms.map(room => (
-                <div
-                  key={room.id}
-                  onClick={() => setActiveRoomId(room.id)}
-                  className={`p-3 cursor-pointer hover:bg-github-surface ${
-                    activeRoomId === room.id ? "bg-github-surface" : ""
-                  }`}
+                <button
+                  onClick={handleCreateRoom}
+                  className="px-3 py-1 bg-github-accent text-white rounded-md hover:bg-github-accent/80 transition"
                 >
-                  <div className="font-semibold text-github-text">{room.roomName}</div>
-                  <div className="text-xs text-github-text-secondary truncate">
-                    {room.createdAt}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* 새 방 추가 UI */}
-            <div className="p-3 border-t border-github-border flex space-x-2">
-
-            </div>
-          </div>
+                방 추가하기
+                </button>
+                <div className="flex-1 overflow-y-auto">
+                  {rooms.map(room => (
+                    <div
+                      key={room.id}
+                      onClick={() => setActiveRoomId(room.id)}
+                      className={`p-3 cursor-pointer hover:bg-github-surface ${
+                        activeRoomId === room.id ? "bg-github-surface" : ""
+                      }`}
+                    >
+                      <div className="font-semibold text-github-text">{room.roomName}</div>
+                      <div className="text-xs text-github-text-secondary truncate">
+                        {room.createdAt}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </>
+            ) 
+            : (
+            <>
+            <div className="p-4 font-bold text-github-accent">채팅방 목록</div>
+            <button className="px-3 py-1 bg-github-accent text-white rounded-md hover:bg-github-accent/80 transition">
+                방 추가하기
+            </button>           
+            </>
+            )}
+     </div>           
 
           {/* 채팅창 */}
           <div className="flex-1 flex flex-col">
-            {activeRoomId !== null ? (
+            {activeRoomId !== null && isLoggedIn ? (
               <>
                 <div className="p-4 border-b border-github-border font-bold text-github-text">
                   {rooms.find(r => r.id === activeRoomId)?.roomName}
@@ -199,17 +213,23 @@ const AIService: React.FC = () => {
                   >
                     전송
                   </button>
-                  <button
-                    onClick={handleCreateRoom}
-                    className="px-3 py-1 bg-github-accent text-white rounded-md hover:bg-github-accent/80 transition"
-                  >
-                  +
-                  </button>
                 </div>
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center text-github-text-secondary">
-                채팅방을 선택하세요
+              <div className="flex-1 flex flex-col justify-end text-github-text-secondary">
+                <div className="p-3 border-t border-github-border flex space-x-2">
+                  <input
+                    type="text"
+                    readOnly
+                    placeholder="로그인해주세요."
+                    className="flex-1 px-3 py-2 rounded-md bg-github-dark text-github-text focus:outline-none focus:ring-2 focus:ring-github-accent"
+                  />
+                  <button
+                    className="px-4 py-2 bg-github-accent text-white rounded-md hover:bg-github-accent/80 transition"
+                  >
+                    전송
+                  </button>
+                </div>
               </div>
             )}
           </div>
