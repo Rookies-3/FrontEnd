@@ -1,7 +1,7 @@
 import React from 'react';
 import { Code2, Database, Globe, Server, Wrench, Bot, ShieldCheck, Layers } from 'lucide-react';
 import { useUserStore } from '../store/user/userStore';
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
@@ -13,6 +13,14 @@ interface Room {
     createdAt: string;
 }
   
+interface ChatMessageDto {
+  type: "ENTER" | "TALK";   // enum 매핑
+  roomId: number;
+  sender: string;
+  message: string;
+  createdAt: string;  
+}
+
 const AIService: React.FC = () => {
     const { isLoggedIn, user} = useUserStore();
     const [rooms, setRooms] = useState<Room[]>([]);
@@ -20,6 +28,7 @@ const AIService: React.FC = () => {
     const [messages, setMessages] = useState<{ sender: "user" | "ai"; text: string }[]>([]);
     const [input, setInput] = useState("");
     const [stompClient, setStompClient] = useState<Client | null>(null);
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
 
     const handleCreateRoom = () => {
@@ -58,6 +67,29 @@ const AIService: React.FC = () => {
         }
     }, [isLoggedIn, user?.accessToken]);
 
+    // ActiveRoomId가 변경이 될 시 메시지 히스토리 재개
+    useEffect(() => {
+      if (isLoggedIn && user?.accessToken && activeRoomId !== null) {
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/chat/room/${activeRoomId}/messages`, {
+          headers: { Authorization: `Bearer ${user.accessToken}` },
+        })
+        .then(res => {
+            const mapped = res.data.map((m:ChatMessageDto)=>({
+              sender: m.sender === user?.username ? "user" : "ai",
+              text: m.message,
+            }));
+            setMessages(mapped);
+        })
+        .catch(err => console.error("채팅 내역 불러오기 실패: ", err));
+      }
+    }, [isLoggedIn, user?.accessToken, user?.username, activeRoomId]);
+    
+    useEffect(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }, [messages]);
+  
     // STOMP 연결 (방 선택시 구독처리)
     useEffect(() => {
       if (isLoggedIn && user?.accessToken && activeRoomId) {
@@ -204,6 +236,8 @@ const AIService: React.FC = () => {
                       </div>
                     </div>
                   ))}
+                   {/* scroll 기준점점 */}
+                   <div ref={messagesEndRef} /> 
                 </div>
                 <div className="p-3 border-t border-github-border flex space-x-2">
                   <input
