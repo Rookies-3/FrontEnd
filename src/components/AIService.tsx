@@ -3,6 +3,9 @@ import { Code2, Database, Globe, Server, Wrench, Bot, ShieldCheck, Layers } from
 import { useUserStore } from '../store/user/userStore';
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+
 
 interface Room {
     id: number;
@@ -12,11 +15,12 @@ interface Room {
   
 const AIService: React.FC = () => {
     const { isLoggedIn, user} = useUserStore();
-
     const [rooms, setRooms] = useState<Room[]>([]);
     const [activeRoomId, setActiveRoomId] = useState<number | null>(null);
     const [messages, setMessages] = useState<{ sender: "user" | "ai"; text: string }[]>([]);
     const [input, setInput] = useState("");
+    const [stompClient, setStompClient] = useState<Client | null>(null);
+
 
     const handleCreateRoom = () => {
         axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/chat/room`, {}, {
@@ -46,7 +50,7 @@ const AIService: React.FC = () => {
                     const mapped: Room[] = res.data.map((r:any) => ({
                         id: r.roomId,
                         roomName: r.roomName,
-                        craetedAt: r.craetedAt,
+                        createdAt: r.createdAt,
                     }));
                     setRooms(mapped);
                 })
@@ -54,16 +58,55 @@ const AIService: React.FC = () => {
         }
     }, [isLoggedIn, user?.accessToken]);
 
-    const handleSend = () => {
-      if (!input.trim()) return;
+    // STOMP 연결 (방 선택시 구독처리)
+    useEffect(() => {
+      if (isLoggedIn && user?.accessToken && activeRoomId) {
+        const client = new Client({
+          webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_BASE_URL}/ws-stomp`),
+          connectHeaders: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+          reconnectDelay: 5000,
+          debug: (str) => console.log(str),
+        });
   
+        client.onConnect = () => {
+          console.log("STOMP Connected");
+  
+          // 방 구독
+          client.subscribe(`/sub/chat/room/${activeRoomId}`, (message) => {
+            const body = JSON.parse(message.body);
+            setMessages(prev => [...prev, { sender: body.sender, text: body.message }]);
+          });
+        };
+  
+        client.activate();
+        setStompClient(client);
+  
+        return () => {
+          client.deactivate();
+        };
+      }  
+    }, [isLoggedIn, user?.accessToken, activeRoomId]);
+
+    const handleSend = () => {
+      if (!input.trim() || activeRoomId === null || !stompClient) return;
+      
+      const chatMessage = {
+        type: "TALK",
+        roomId: activeRoomId,
+        sender: user?.username,
+        message: input,
+      }
+
       // 사용자 메시지 추가
       setMessages((prev) => [...prev, { sender: "user", text: input }]);
   
-      // AI 응답 (임시)
-      setTimeout(() => {
-        setMessages((prev) => [...prev, { sender: "ai", text: "AI 응답 예시: " + input }]);
-      }, 500);
+      // STOMP publish
+      stompClient.publish({
+        destination: "/pub/chat/message",
+        body: JSON.stringify(chatMessage),
+      });
   
       setInput("");
     };
@@ -71,67 +114,31 @@ const AIService: React.FC = () => {
 
     
     return (
-        <section id="AIService" className="py-20 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-16 fade-in-up">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-github-text mb-4">
-                     안녕하세요, {!isLoggedIn ?
-                                 (
-                                    <span className="text-github-accent">
-                                        방문자님
-                                    </span> 
-                                  ) : (
-                                    <span className="text-github-accent">
-                                        {user?.username} 님
-                                    </span>
-                                  )}
-                    </h2> 
-                    {!isLoggedIn ? (
-                        <p className="text-lg text-github-text-secondary max-w-2xl mx-auto">
-                            로그인이 필요한 서비스입니다.  
-                        </p>     
-                    ) : (
-                        <p className="text-lg text-github-text-secondary max-w-2xl mx-auto">
-                            오늘은 무엇을 도와드릴까요?  
-                        </p>   
-                    )}             
-                </div>
-{/* 
-                <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-                    <div className="fade-in-left">
-                        <div className="relative">
-                            <div className="w-full h-80 bg-gradient-to-br from-github-accent/10 to-github-purple/10 rounded-2xl flex items-center justify-center">
-                                <div className="text-center">
-                                   
-                                    <p className="text-github-text-secondary">
-                                    </p>
-                                </div>                       
-                            </div>
-                            <div className="absolute -top-4 -right-4 w-24 h-24 bg-github-accent/10 rounded-full flex items-center justify-center animate-pulse">
-                                <Layers className="w-8 h-8 text-github-accent" />
-                            </div>         
-                        </div>
-                    </div>
-
-                    <div className="fade-in-right">
-                                <h3 className="text-2xl font-bold text-github-text mb-6">
-                                    
-                                </h3>
-                            <div className="space-y-4 text-github-text-secondary">
-                            <p>
-                            어떤 내용 추가해보기 
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-8">
-                            <div className="text-center p-3 sm:p-4 bg-github-surface rounded-lg">
-                                <div className="text-xl sm:text-2xl font-bold text-github-accent">빈공간</div>
-                                <div className="text-xs sm:text-sm text-github-text-secondary">빈공간</div>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
-
+<section id="AIService" className="py-20 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16 fade-in-up">
+            <h2 className="text-3xl sm:text-4xl font-bold text-github-text mb-4">
+              안녕하세요, {!isLoggedIn ?
+                          (
+                            <span className="text-github-accent">
+                                방문자님
+                            </span> 
+                          ) : (
+                            <span className="text-github-accent">
+                                {user?.username} 님
+                            </span>
+                          )}
+            </h2> 
+            {!isLoggedIn ? (
+                <p className="text-lg text-github-text-secondary max-w-2xl mx-auto">
+                    로그인이 필요한 서비스입니다.  
+                </p>     
+            ) : (
+                <p className="text-lg text-github-text-secondary max-w-2xl mx-auto">
+                    오늘은 무엇을 도와드릴까요?  
+                </p>   
+            )}             
+        </div>
         <div className="flex h-[500px] bg-github-surface rounded-xl shadow-lg overflow-hidden">
           {/* 채팅방 목록 */}
           <div className="w-64 border-r border-github-border bg-github-dark flex flex-col">
