@@ -5,6 +5,8 @@ import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { FaMicrophone } from "react-icons/fa";
+
 
 
 interface Room {
@@ -22,6 +24,7 @@ interface ChatMessageDto {
 }
 
 const AIService: React.FC = () => {
+    const [isRecording, setIsRecording] = useState(false);
     const { isLoggedIn, user} = useUserStore();
     const [rooms, setRooms] = useState<Room[]>([]);
     const [activeRoomId, setActiveRoomId] = useState<number | null>(null);
@@ -29,6 +32,59 @@ const AIService: React.FC = () => {
     const [input, setInput] = useState("");
     const [stompClient, setStompClient] = useState<Client | null>(null);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const recognitionRef = useRef<any | null>(null);
+
+    const handleVoiceInput = () => {
+      // 이미 녹음 중(isRecording)이고 recognition 인스턴스가(recognitionRef.current) 있다면 중지
+      if (isRecording && recognitionRef.current) {
+          recognitionRef.current.stop();
+          console.log("음성 인식 수동 중지");
+          
+          // onend 핸들러가 자동으로 isRecording, recognitionRef를 정리
+          return;
+      }
+        
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+         alert("이 브라우저는 음성 인식을 지원하지 않습니다.");
+         return;
+      }
+        
+      const recognition = new SpeechRecognition();
+        
+      recognition.lang = "ko-KR"; 
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+        
+      recognitionRef.current = recognition; 
+        
+      recognition.start();
+        
+      recognition.onstart = () => {
+        setIsRecording(true); 
+        console.log("음성 인식 시작");
+      };
+        
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        const transcript = event.results[0][0].transcript;
+        console.log("인식된 텍스트:", transcript);
+        handleSend(transcript);
+      };
+        
+      recognition.onerror = (event: any) => {
+        if (event.error === 'aborted') {
+          console.log("음성 인식이 (수동으로) 중지되었습니다.");
+        } else {
+          console.error("음성 인식 오류:", event.error);
+        }
+      };
+        
+      recognition.onend = () => {
+        setIsRecording(false);
+        recognitionRef.current = null; 
+        console.log("음성 인식 종료");
+      };
+    };     
 
 
     const handleCreateRoom = () => {
@@ -108,7 +164,14 @@ const AIService: React.FC = () => {
           // 방 구독
           client.subscribe(`/sub/chat/room/${activeRoomId}`, (message) => {
             const body = JSON.parse(message.body);
-            setMessages(prev => [...prev, { sender: body.sender, text: body.message }]);
+            if(body.sender !== user?.username) {
+              setMessages(prev => [...prev, 
+                                            { 
+                                              sender: "ai", text: body.message 
+                                            }
+                                  ]
+                          );
+            }
           });
         };
   
@@ -119,20 +182,22 @@ const AIService: React.FC = () => {
           client.deactivate();
         };
       }  
-    }, [isLoggedIn, user?.accessToken, activeRoomId]);
+    }, [isLoggedIn, user?.accessToken, activeRoomId, user?.username]);
 
-    const handleSend = () => {
-      if (!input.trim() || activeRoomId === null || !stompClient) return;
+    const handleSend = (message?: string) => {
+      const messageToSend = message ?? input;
+
+      if (!messageToSend.trim() || activeRoomId === null || !stompClient) return;
       
       const chatMessage = {
         type: "TALK",
         roomId: activeRoomId,
         sender: user?.username,
-        message: input,
+        message: messageToSend.trim(),
       }
 
       // 사용자 메시지 추가
-      setMessages((prev) => [...prev, { sender: "user", text: input }]);
+      setMessages((prev) => [...prev, { sender: "user", text: messageToSend.trim() }]);
   
       // STOMP publish
       stompClient.publish({
@@ -236,7 +301,7 @@ const AIService: React.FC = () => {
                       </div>
                     </div>
                   ))}
-                   {/* scroll 기준점점 */}
+                   {/* scroll 기준점 */}
                    <div ref={messagesEndRef} /> 
                 </div>
                 <div className="p-3 border-t border-github-border flex space-x-2">
@@ -249,10 +314,16 @@ const AIService: React.FC = () => {
                     className="flex-1 px-3 py-2 rounded-md bg-github-dark text-github-text focus:outline-none focus:ring-2 focus:ring-github-accent"
                   />
                   <button
-                    onClick={handleSend}
+                    onClick={() => handleSend()}
                     className="px-4 py-2 bg-github-accent text-white rounded-md hover:bg-github-accent/80 transition"
                   >
                     전송
+                  </button>
+                  <button
+                    onClick={handleVoiceInput}
+                    className={`flex items-center space-x-2 px-4 py-2 bg-github-dark text-github-text rounded-md hover:bg-github-accent/40 transition
+                    ${isRecording ? "bg-red-600 text-white hover:bg-red-700" : "bg-github-dark text-github-text hover:bg-github-accent/40"}`}>
+                    <FaMicrophone size={20}/>
                   </button>
                 </div>
               </>
