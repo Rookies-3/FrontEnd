@@ -333,7 +333,6 @@ const AIService: React.FC = () => {
                   <input
                     type="text"
                     readOnly
-                    placeholder="로그인해주세요."
                     className="flex-1 px-3 py-2 rounded-md bg-github-dark text-github-text focus:outline-none focus:ring-2 focus:ring-github-accent"
                   />
                   <button
