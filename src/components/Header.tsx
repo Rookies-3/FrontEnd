@@ -66,42 +66,31 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
     }
   };
 
-  // 회원가입 요청
-  const handleSignup = async (
-    username: string,
-    name: string,
-    nickname: string,
-    email: string,
-    phone: string,
-    password: string
-  ) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/users/signup`,
-        {
-          username,
-          name,
-          nickname,
-          phone,
-          password,
-          email,
-        }
-      );
-      login({
-        email: response.data.email,
-        password: response.data.password,
-      });
-    } catch (error) {
-      console.error("회원가입 실패:", error);
-      alert("회원가입에 실패했습니다.");
-    }
-  };
+    const handleSignup = async (username: string, name: string, nickname: string, email: string, phone: string, password: string) => {
+        console.log('회원가입 시도:', nickname, name, email, phone, password);
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/users/signup`,
+                {
+                    username,
+                    name,
+                    nickname,
+                    phone,
+                    password,
+                    email,
+                });
 
-  // 섹션 스크롤 이동
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    element?.scrollIntoView({ behavior: 'smooth' });
-  };
+                console.log("회원가입 성공");
+
+                login({
+                    email: response.data.email,
+                    password: response.data.password,
+                });
+        } catch (error) {
+            console.error("회원가입 실패:", error);
+            alert("회원가입에 실패했습니다.");                  
+        }
+    }
+   
 
   return (
     <>

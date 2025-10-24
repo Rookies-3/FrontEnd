@@ -5,7 +5,6 @@ interface User {
     username?: string;
     email?: string;
     accessToken?: string;
-    // ✅ password 추가
     password?: string;
   }
 
