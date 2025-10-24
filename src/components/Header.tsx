@@ -86,7 +86,10 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
                     email,
                 });
 
-                console.log("회원가입 성공");
+                alert("회원가입되었습니다.");
+                setIsSignupOpen(false);
+
+                setIsLoginOpen(true); 
 
                 // login({
                 //     email: response.data.email,
