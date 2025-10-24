@@ -1,3 +1,4 @@
+import { Eye, EyeOff } from "lucide-react"; 
 import React, { useState } from 'react';
 interface LoginModalProps {
     onClose: () => void;
@@ -7,6 +8,7 @@ interface LoginModalProps {
   const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLogin }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
   
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
@@ -67,6 +69,14 @@ interface LoginModalProps {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 rounded-md bg-github-dark border border-github-border focus:outline-none focus:border-github-accent"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)} 
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-github-text-secondary hover:text-github-text transition"
+              aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />} 
+            </button>
         </div>
 
         {/* 일반 로그인 */}
