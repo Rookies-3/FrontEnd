@@ -88,10 +88,10 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
 
                 console.log("회원가입 성공");
 
-                login({
-                    email: response.data.email,
-                    password: response.data.password,
-                });
+                // login({
+                //     email: response.data.email,
+                //     password: response.data.password,
+                // });
         } catch (error) {
             console.error("회원가입 실패:", error);
             alert("회원가입에 실패했습니다.");                  
