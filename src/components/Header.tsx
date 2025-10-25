@@ -22,6 +22,11 @@ function decodeJwt(token: string) {
   return JSON.parse(jsonPayload);
 }
 
+const scrollToSection = (sectionId: string) => {
+  const element = document.getElementById(sectionId);
+  element?.scrollIntoView({ behavior: 'smooth' });
+};
+
 const Header: React.FC<HeaderProps> = ({ activeSection }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -118,7 +123,8 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
               <ul className="flex space-x-8">
                 {[
                   { name: '홈', id: 'home' },
-                  { name: 'AI 서비스', id: 'AIService' },
+                  { name: 'AI와 대화하기', id: 'AIService' },
+                  { name: '실전연습', id: 'AIService2'}
                 ].map((item) => (
                   <li key={item.id}>
                     <button
