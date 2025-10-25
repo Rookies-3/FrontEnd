@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowDown, Code, Database, Server } from 'lucide-react';
-import { FaPlay, FaStop, FaPause, FaVolumeMute } from "react-icons/fa";
+import { FaMicrophone, FaUsers, FaChartPie, FaBrain } from "react-icons/fa";
 import { useUserStore } from '../store/user/userStore';
 
 const Hero: React.FC = () => {
@@ -8,7 +8,7 @@ const Hero: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const texts = ['맞춤 면접 코칭~', 'AI가 도와드려요!'];
+    const texts = ['AI 챗봇으로', '연습을 실전처럼!'];
 
     
     useEffect(() => {
@@ -68,10 +68,10 @@ const Hero: React.FC = () => {
             <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-full">
                 <div className="fade-in-up">
                     <div className="flex justify-center items-center space-x-3 sm:space-x-4 mb-6 sm:mb-8">
-                        <FaPlay className="w-6 h-6 sm:w-8 sm:h-8 text-github-accent animate-float" />
-                        <FaPause className="w-6 h-6 sm:w-8 sm:h-8 text-github-purple animate-float-delayed" />
-                        <FaStop className="w-6 h-6 sm:w-8 sm:h-8 text-github-accent animate-float" />
-                        <FaVolumeMute className="w-8 h-8 sm:w-8 sm:h-8 text-github-accent animate-float-delayed" />                      
+                        <FaBrain className="w-6 h-6 sm:w-8 sm:h-8 text-github-accent animate-float" />
+                        <FaMicrophone className="w-6 h-6 sm:w-8 sm:h-8 text-github-purple animate-float-delayed" />
+                        <FaChartPie className="w-6 h-6 sm:w-8 sm:h-8 text-shadow-github-purple animate-float" />
+                        <FaUsers className="w-8 h-8 sm:w-8 sm:h-8 text-cyan-400 animate-float-delayed" />                      
                     </div>
 
                     <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 px-2">
@@ -96,16 +96,16 @@ const Hero: React.FC = () => {
                             onClick={() => scrollToSection('AIService')}
                             className="btn-primary group"
                         >
-                            AI 코치와 대화하기.
+                            AI와 대화하기
                             <Code className="w-4 h-4 ml-2 group-hover:rotate-12 transition-transform duration-200" />
                         </button>      
-                        {/* <button
+                        <button
                             onClick={() => scrollToSection('AIServiceSecond')}
                             className="btn-secondary group"
                         >
-                            서비스2로 가기
+                            면접 시뮬레이션
                             <ArrowDown className="w-4 h-4 ml-2 group-hover:translate-y-1 transition-transform duration-200" />
-                        </button>                  */}
+                        </button>                 
                     </div>
 
                     <div className="animate-bounce">
