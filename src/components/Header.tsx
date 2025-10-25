@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   activeSection: string;
+  setActiveSection: (section: string) => void;
 }
 
 function decodeJwt(token: string) {
@@ -27,12 +28,12 @@ const scrollToSection = (sectionId: string) => {
   element?.scrollIntoView({ behavior: 'smooth' });
 };
 
-const Header: React.FC<HeaderProps> = ({ activeSection }) => {
+const Header: React.FC<HeaderProps> = ({ activeSection, setActiveSection }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
-  const [showMyPage, setShowMyPage] = useState(false); // ✅ 오버레이 상태
-  const [slideIn, setSlideIn] = useState(false); // ✅ 애니메이션 상태
+  const [showMyPage, setShowMyPage] = useState(false); 
+  const [slideIn, setSlideIn] = useState(false); 
   const { isLoggedIn, user, login, logout } = useUserStore();
   const navigate = useNavigate();
 
@@ -128,7 +129,10 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
                 ].map((item) => (
                   <li key={item.id}>
                     <button
-                      onClick={() => scrollToSection(item.id)}
+                      onClick={() => {
+                          scrollToSection(item.id);
+                          setActiveSection(item.id);
+                      }}
                       className={`text-sm font-medium transition-colors duration-200 hover:text-github-accent ${
                         activeSection === item.id
                           ? 'text-github-accent'
@@ -190,7 +194,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
         />
       )}
 
-      {/* ✅ 오른쪽 슬라이드 마이페이지 */}
+      {/* 오른쪽 슬라이드 마이페이지 */}
       {showMyPage && (
         <div
           className="fixed inset-0 bg-black/50 z-[999] flex justify-end transition-opacity duration-300"
