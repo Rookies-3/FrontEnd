@@ -230,7 +230,7 @@ const AIService: React.FC = () => {
 
     
     return (
-<section id="AIService" className="py-20 px-4 sm:px-6 lg:px-8">
+<section id="AIService" className="min-h-screen py-20 px-4 sm:px-6 lg:px-8">
     <div className="">
         <div className="text-center mb-16 fade-in-up">
             <h2 className="text-3xl sm:text-4xl font-bold text-github-text mb-4">
@@ -255,7 +255,7 @@ const AIService: React.FC = () => {
                 </p>   
             )}             
         </div>
-        <div className="flex h-[500px] bg-github-surface rounded-xl shadow-lg overflow-hidden">
+        <div className="flex h-[600px] bg-github-surface rounded-xl shadow-lg overflow-hidden">
           {/* 채팅방 목록 */}
           <div className="w-64 border-r border-github-border bg-github-dark flex flex-col">
 

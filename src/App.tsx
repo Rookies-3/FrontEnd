@@ -13,15 +13,25 @@ function App() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'AIService'];
+      const sections = ['home', 'AIService', 'AIService2'];
       const currentSection = sections.find(section => {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
+          const middle = window.innerHeight / 2;
+          return rect.top <= middle && rect.bottom >= middle;
         }
         return false;
       });
+      
+      // const currentSection = sections.find(section => {
+      //   const element = document.getElementById(section);
+      //   if (element) {
+      //     const rect = element.getBoundingClientRect();
+      //     return rect.top <= 100 && rect.bottom >= 100;
+      //   }
+      //   return false;
+      // });
 
       if (currentSection) {
         setActiveSection(currentSection);
@@ -52,10 +62,14 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    console.log("현재 activeSection:", activeSection);
+  }, [activeSection]);
+  
   return (
     <Router>
       <div className="bg-github-dark text-github-text font-inter min-h-screen">
-        <Header activeSection={activeSection} />
+        <Header activeSection={activeSection} setActiveSection={setActiveSection}/>
 
         <main>
           <Routes>
