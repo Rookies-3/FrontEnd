@@ -139,6 +139,7 @@ const AIService2: React.FC = () => {
                   .catch(err => console.error("채팅방 목록 불러오기 실패: ", err));
           }
       }, [isLoggedIn, user?.accessToken]);
+      
   
       // ActiveRoomId가 변경이 될 시 메시지 히스토리 재개
       useEffect(() => {
