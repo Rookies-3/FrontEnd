@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop, front/** ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+    - name: 저장소 체크아웃
+      uses: actions/checkout@v4
+
+    - name: Node.js ${{ matrix.node-version }} 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: 의존성 설치
+      run: npm ci
+
+    - name: 린트 검사
+      run: npm run lint
+
+    - name: 빌드
+      run: npm run build
+
+    - name: 빌드 결과물 업로드
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/
+        retention-days: 7
+
